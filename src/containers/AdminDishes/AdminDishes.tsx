@@ -1,9 +1,8 @@
 import React, {useEffect} from 'react';
-import ClientDish from "../../components/ClientDish/ClientDish";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {selectDishes, selectFetchAllLoading} from "../../store/HomeSlice";
 import Spinner from "../../components/Spinner/Spinner";
-import {fetchDishes} from "../../store/HomeThunks";
+import {deleteDish, fetchDishes} from "../../store/HomeThunks";
 import AdminDish from "../../components/AdminDish";
 import {Link} from "react-router-dom";
 
@@ -16,6 +15,11 @@ const AdminDishes = () => {
     dispatch(fetchDishes());
   }, [dispatch]);
 
+  const removeDish = async (id: string) => {
+    await dispatch(deleteDish(id));
+    await dispatch(fetchDishes());
+  }
+
   let info = null;
 
   if (fetchAllLoading) {
@@ -24,7 +28,7 @@ const AdminDishes = () => {
     info = (
       <>
         {dishes.map((dish) => (
-          <AdminDish key={dish.id} name={dish.name} image={dish.image} id={dish.id} price={dish.price}/>
+          <AdminDish key={dish.id} name={dish.name} image={dish.image} id={dish.id} price={dish.price} onDelete={removeDish}/>
         ))}
       </>
     )

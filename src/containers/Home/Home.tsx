@@ -1,24 +1,31 @@
 import React, {useEffect} from 'react';
 import ClientDish from "../../components/ClientDish/ClientDish";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {selectDishes, selectFetchAllLoading, selectTotalPrice} from "../../store/HomeSlice";
+import {selectDishes, selectFetchAllLoading, selectOrder} from "../../store/HomeSlice";
 import {fetchDishes} from "../../store/HomeThunks";
 import Spinner from "../../components/Spinner/Spinner";
+import {Link} from "react-router-dom";
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const dishes = useAppSelector(selectDishes);
-  const totalPrice = useAppSelector(selectTotalPrice);
+  const order = useAppSelector(selectOrder);
   const fetchAllLoading = useAppSelector(selectFetchAllLoading);
 
   useEffect(() => {
     dispatch(fetchDishes());
   }, [dispatch]);
 
-  // const removeContact = async (id: string) => {
-  //   await dispatch(deleteContact(id));
-  //   await dispatch(fetchContacts());
-  // }
+  const totalPrice = () => {
+    const totalPrice = Object.keys(order.dishes).reduce((acc, id) => {
+      const dish = dishes.find(dish => dish.id === id);
+      if (dish) {
+        return acc + dish.price * order.dishes[id];
+      }
+      return acc;
+    }, 0);
+    return totalPrice;
+  }
 
   let info = null;
 
@@ -42,8 +49,8 @@ const Home = () => {
       </div>
       {info}
       <div className="d-flex align-items-center justify-content-between p-2 mt-2">
-        <h2 className="m-0">Order total: {totalPrice} KGS</h2>
-        <button className="btn btn-primary">Checkout</button>
+        <h2 className="m-0">Order total: {totalPrice()} KGS</h2>
+        <Link to={"/client-order"} className="btn btn-primary">Checkout</Link>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import Add from "./containers/Add/Add";
 import AdminDishes from "./containers/AdminDishes/AdminDishes";
 import AdminOrders from "./containers/AdminOrders/AdminOrders";
 import Edit from "./containers/Edit/Edit";
+import ClientCart from "./containers/ClientCart/ClientCart";
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
         )}/>
         <Route path="/edit-dish/:id" element={(
           <Edit/>
+        )}/>
+        <Route path="/client-order" element={(
+          <ClientCart/>
         )}/>
       </Routes>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {countTotalPrice} from "../../store/HomeSlice";
+import {addDishToOrder} from "../../store/HomeSlice";
 import {useAppDispatch} from "../../app/hooks";
 
 interface Props {
@@ -12,8 +12,9 @@ interface Props {
 const ClientDish: React.FC<Props> = ({name,image,id,price}) => {
   const dispatch = useAppDispatch();
 
+
   return (
-    <div onClick={() => dispatch(countTotalPrice(price))} className="d-flex align-items-center justify-content-between p-2 border mt-2">
+    <div onClick={() => dispatch(addDishToOrder(id))} className="d-flex align-items-center justify-content-between p-2 border mt-2">
       <div className="d-flex align-items-center">
         <img src={image} style={{width: "100px", marginRight: "10px"}} alt=""/>
         <h3>{name}</h3>

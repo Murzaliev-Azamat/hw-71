@@ -1,5 +1,5 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {Dish, DishApi, DishesApiList} from "../types";
+import {Dish, DishApi, DishesApiList, Order, OrderApi, OrderApiList} from "../types";
 import axiosApi from "../axiosApi";
 
 export const fetchDishes = createAsyncThunk<Dish[]>(
@@ -21,12 +21,38 @@ export const fetchDishes = createAsyncThunk<Dish[]>(
   },
 )
 
+export const fetchOrders = createAsyncThunk<Order[]>(
+    'home/fetchAllOrders',
+    async () => {
+        const response = await axiosApi.get<OrderApiList | null>('/orders.json');
+        const orders = response.data;
+        if (orders === null) {
+            return [];
+        } else {
+            return Object.keys(orders).map(key => {
+                const order = orders[key];
+                return {
+                    ...order,
+                    id: key
+                }
+            });
+        }
+    },
+)
+
 
 export const addDish = createAsyncThunk<void, DishApi>(
   'home/addOneDish',
   async ({name,price,image}) => {
     await axiosApi.post<DishApi>('/dishes.json', {name: name, price: price, image: image});
   }
+);
+
+export const completeOrder = createAsyncThunk<void, string>(
+    'home/completeOrder',
+    async (id) => {
+        await axiosApi.delete('orders/' + id + '.json');
+    }
 );
 
 export const fetchOneDish = createAsyncThunk<Dish, string>(
@@ -49,6 +75,13 @@ export const fetchOneDish = createAsyncThunk<Dish, string>(
       )
   },
 )
+
+export const addOrder = createAsyncThunk<void, OrderApi>(
+    'home/addOrder',
+    async (order) => {
+        await axiosApi.post<OrderApi>('/orders.json', order);
+    }
+);
 
 interface UpdateDishParams {
   id: string;

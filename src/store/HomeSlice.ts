@@ -1,45 +1,67 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../app/store";
-import {Dish, DishApi} from "../types";
-import {addDish, deleteDish, fetchDishes, fetchOneDish, updateDish} from "./HomeThunks";
+import {Dish, DishApi, Order, OrderApi} from "../types";
+import {
+  addDish,
+  addOrder,
+  completeOrder,
+  deleteDish,
+  fetchDishes,
+  fetchOneDish,
+  fetchOrders,
+  updateDish
+} from "./HomeThunks";
 
 
 interface DishesState {
   dishes: Dish[] | [];
   fetchAllLoading: boolean;
+  fetchAllOrdersLoading: boolean;
   fetchOneLoading: boolean;
   addLoading: boolean;
+  addOrderLoading: boolean;
   updateLoading: boolean;
   deleteLoading: boolean;
-  // selectedContactId: string | null;
+  completeOrderLoading: boolean;
   dish: DishApi | null;
-  totalPrice: number;
+  order: OrderApi;
+  orders: Order[];
 }
 
 const initialState: DishesState = {
   dishes: [],
   fetchAllLoading: false,
+  fetchAllOrdersLoading: false,
   fetchOneLoading: false,
   addLoading: false,
+  addOrderLoading: false,
   updateLoading: false,
   deleteLoading: false,
-  // selectedContactId: null,
+  completeOrderLoading: false,
   dish: null,
-  totalPrice: 0,
+  order: {
+    dishes: {}
+  },
+  orders: []
 }
 
 export const HomeSlice = createSlice({
   name: 'home',
   initialState: initialState,
   reducers: {
-    selectContact: (state, action: PayloadAction<string>) => {
-      // state.selectedContactId = action.payload;
+    addDishToOrder: (state, action: PayloadAction<string>) => {
+      const dish = state.order.dishes[action.payload];
+      if (dish) {
+        state.order.dishes[action.payload]++;
+      } else {
+        state.order.dishes[action.payload] = 1;
+      }
     },
-    unSelectContact: (state) => {
-      // state.selectedContactId = null;
-    },
-    countTotalPrice: (state, action: PayloadAction<number>) => {
-      state.totalPrice = state.totalPrice + action.payload;
+    removeDishFromOrder: (state, action: PayloadAction<string>) => {
+      const dish = state.order.dishes[action.payload];
+      if (dish) {
+        delete state.order.dishes[action.payload];
+      }
     },
   },
   extraReducers: (builder) => {
@@ -90,19 +112,51 @@ export const HomeSlice = createSlice({
     builder.addCase(addDish.rejected, (state) => {
       state.addLoading = false;
     });
+    builder.addCase(addOrder.pending, (state) => {
+      state.addOrderLoading = true;
+    });
+    builder.addCase(addOrder.fulfilled, (state) => {
+      state.addOrderLoading = false;
+      state.order.dishes = {};
+    });
+    builder.addCase(addOrder.rejected, (state) => {
+      state.addOrderLoading = false;
+    });
+    builder.addCase(fetchOrders.pending, (state) => {
+      state.fetchAllOrdersLoading = true;
+    });
+    builder.addCase(fetchOrders.fulfilled, (state, action) => {
+      state.fetchAllOrdersLoading = false;
+      state.orders = action.payload;
+    });
+    builder.addCase(fetchOrders.rejected, (state) => {
+      state.fetchAllOrdersLoading = false;
+    });
+    builder.addCase(completeOrder.pending, (state) => {
+      state.completeOrderLoading = true;
+    });
+    builder.addCase(completeOrder.fulfilled, (state) => {
+      state.completeOrderLoading = false;
+    });
+    builder.addCase(completeOrder.rejected, (state) => {
+      state.completeOrderLoading = false;
+    });
   }
 });
 
 export const homeReducer = HomeSlice.reducer;
-export const {countTotalPrice, unSelectContact} = HomeSlice.actions;
+export const {addDishToOrder, removeDishFromOrder} = HomeSlice.actions;
 
 export const selectDishes = (state: RootState) => state.home.dishes;
+export const selectOrders = (state: RootState) => state.home.orders;
 export const selectOneDish = (state: RootState) => state.home.dish;
-export const selectTotalPrice = (state: RootState) => state.home.totalPrice;
+export const selectOrder = (state: RootState) => state.home.order;
 // export const selectSelectedContact = (state: RootState) => state.contacts.contacts.filter(contact => contact.id === state.contacts.selectedContactId)[0];
 
 export const selectFetchAllLoading = (state: RootState) => state.home.fetchAllLoading;
+export const selectFetchAllOrdersLoading = (state: RootState) => state.home.fetchAllOrdersLoading;
 export const selectFetchOneLoading = (state: RootState) => state.home.fetchOneLoading;
 export const selectAddLoading = (state: RootState) => state.home.addLoading;
 export const selectUpdateLoading = (state: RootState) => state.home.updateLoading;
 export const selectDeleteLoading = (state: RootState) => state.home.deleteLoading;
+export const selectCompleteOrderLoading = (state: RootState) => state.home.completeOrderLoading;
