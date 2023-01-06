@@ -1,25 +1,22 @@
-export interface Contact {
+export interface Dish {
   id: string;
   name: string;
-  phone: number;
-  email: string;
   image: string;
+  price: number;
 }
 
-export interface ContactApi {
+export interface DishApi {
   name: string;
-  phone: number;
-  email: string;
   image: string;
+  price: number;
 }
 
-export interface ContactsApiList {
-  [id: string]: ContactApi;
+export interface DishesApiList {
+  [id: string]: DishApi;
 }
 
 interface FormMutation {
   name: string;
-  phone: string;
-  email: string;
   image: string;
+  price: string;
 }
