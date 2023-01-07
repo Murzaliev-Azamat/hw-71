@@ -29,7 +29,7 @@ const ClientCart = () => {
 
       if (dish) {
           dishesInfo.push(
-              <div className="d-flex align-items-center justify-content-between mt-5" key={dish.id}>
+              <div className="d-flex align-items-center justify-content-between mt-1" key={dish.id}>
                   <div className="d-flex align-items-center justify-content-between">
                       <p className="me-3 m-0">{dish.name}</p>
                       <p className="m-0">x {order.dishes[id]}</p>
